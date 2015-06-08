@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
+import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
 import com.spreys.spotifystreamer.adapters.TopTracksAdapter;
 
@@ -30,6 +31,8 @@ public class TopTracksActivity extends AppCompatActivity {
     public final static String EXTRA_ARTIST_ID = "extra_artist_id";
     public final static String EXTRA_ARTIST_NAME = "extra_artist_name";
 
+    private MyApplication mApplication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +43,21 @@ public class TopTracksActivity extends AppCompatActivity {
         bar.setTitle(R.string.top_tracks_title);
         bar.setSubtitle(getIntent().getStringExtra(EXTRA_ARTIST_NAME));
 
-        new GetTopTracksTask(this).execute(getIntent().getStringExtra(EXTRA_ARTIST_ID));
+        mApplication = (MyApplication)getApplication();
+
+        if(mApplication.topTracks != null){
+            populateAdapter();
+        } else {
+            new GetTopTracksTask(this).execute(getIntent().getStringExtra(EXTRA_ARTIST_ID));
+        }
+    }
+
+    private void populateAdapter() {
+        TopTracksAdapter adapter = new TopTracksAdapter(this, mApplication.topTracks);
+
+        //Attach the adapter to the list view
+        ListView listView = (ListView)findViewById(R.id.activity_top_tracks_list_view);
+        listView.setAdapter(adapter);
     }
 
     class GetTopTracksTask extends AsyncTask<String, Void, List<Track>> {
@@ -67,11 +84,8 @@ public class TopTracksActivity extends AppCompatActivity {
         protected void onPostExecute(final List<Track> tracks) {
             super.onPostExecute(tracks);
 
-            TopTracksAdapter adapter = new TopTracksAdapter(mContext, tracks);
-
-            //Attach the adapter to the list view
-            ListView listView = (ListView)findViewById(R.id.activity_top_tracks_list_view);
-            listView.setAdapter(adapter);
+            mApplication.topTracks = tracks;
+            populateAdapter();
         }
     }
 }

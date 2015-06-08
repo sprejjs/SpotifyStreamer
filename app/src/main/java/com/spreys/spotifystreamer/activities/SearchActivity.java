@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
 import com.spreys.spotifystreamer.adapters.SearchResultsAdapter;
 
@@ -27,10 +28,18 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private MyApplication mApplication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seach);
+
+        mApplication = (MyApplication)getApplication();
+        //Repopulate data if available
+        if(mApplication.searchResultArtists != null){
+            addAdapter();
+        }
 
         EditText searchView = (EditText)findViewById(R.id.activity_search_edit_text);
         final Context mContext = this;
@@ -48,6 +57,29 @@ public class SearchActivity extends AppCompatActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+    }
+
+    public void addAdapter(){
+        SearchResultsAdapter adapter = new SearchResultsAdapter(this, mApplication.searchResultArtists);
+
+        final Context mContext = this;
+        //Attach the adapter to the list view
+        ListView listView = (ListView)findViewById(R.id.activity_search_list_view);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //Clear the top tracks cache
+                mApplication.topTracks = null;
+
+                //Navigate to the next activity
+                Intent intent = new Intent(mContext, TopTracksActivity.class);
+                intent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, mApplication.searchResultArtists.get(position).id);
+                intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mApplication.searchResultArtists.get(position).name);
+                startActivity(intent);
             }
         });
     }
@@ -73,6 +105,9 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(final List<Artist> artists) {
             super.onPostExecute(artists);
 
+            //Keep a copy of list in case the screen orientation changes
+            mApplication.searchResultArtists = artists;
+
             //Check if artists been found
             if(artists.size() == 0) {
                 Toast.makeText(mContext,
@@ -80,20 +115,7 @@ public class SearchActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT)
                         .show();
             } else {
-                SearchResultsAdapter adapter = new SearchResultsAdapter(mContext, artists);
-
-                //Attach the adapter to the list view
-                ListView listView = (ListView)findViewById(R.id.activity_search_list_view);
-                listView.setAdapter(adapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(mContext, TopTracksActivity.class);
-                        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, artists.get(position).id);
-                        intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, artists.get(position).name);
-                        startActivity(intent);
-                    }
-                });
+                addAdapter();
             }
         }
     }
