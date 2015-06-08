@@ -5,4 +5,5 @@
     <string name="action_settings">Settings</string>
     <string name="help_seart_artist">Artist Name</string>
     <string name="top_tracks_title">Top 10 Tracks</string>
+    <string name="err_no_artists_found">No artists match this search query</string>
 </resources>
