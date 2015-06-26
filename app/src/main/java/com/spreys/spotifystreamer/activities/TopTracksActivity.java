@@ -1,23 +1,12 @@
 package com.spreys.spotifystreamer.activities;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
 
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
-import com.spreys.spotifystreamer.adapters.TopTracksAdapter;
-
-import java.util.HashMap;
-import java.util.List;
-
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
+import com.spreys.spotifystreamer.fragments.TopTracksFragment;
 
 /**
  * Created with Android Studio
@@ -31,61 +20,28 @@ public class TopTracksActivity extends AppCompatActivity {
     public final static String EXTRA_ARTIST_ID = "extra_artist_id";
     public final static String EXTRA_ARTIST_NAME = "extra_artist_name";
 
-    private MyApplication mApplication;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_tracks);
 
+        //Customise action bar
         ActionBar bar = getSupportActionBar();
         assert bar != null;
         bar.setTitle(R.string.top_tracks_title);
         bar.setSubtitle(getIntent().getStringExtra(EXTRA_ARTIST_NAME));
 
-        mApplication = (MyApplication)getApplication();
 
-        if(mApplication.topTracks != null){
-            populateAdapter();
-        } else {
-            new GetTopTracksTask(this).execute(getIntent().getStringExtra(EXTRA_ARTIST_ID));
-        }
-    }
+        //Create the fragment
+        TopTracksFragment fragment = new TopTracksFragment();
 
-    private void populateAdapter() {
-        TopTracksAdapter adapter = new TopTracksAdapter(this, mApplication.topTracks);
+        Bundle args = new Bundle();
+        args.putString(TopTracksFragment.KEY_ARTIST_ID, getIntent().getStringExtra(EXTRA_ARTIST_ID));
 
-        //Attach the adapter to the list view
-        ListView listView = (ListView)findViewById(R.id.activity_top_tracks_list_view);
-        listView.setAdapter(adapter);
-    }
+        fragment.setArguments(args);
 
-    class GetTopTracksTask extends AsyncTask<String, Void, List<Track>> {
-        private Context mContext;
-
-        GetTopTracksTask(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        protected List<Track> doInBackground(String... params) {
-            SpotifyApi api = new SpotifyApi();
-            SpotifyService spotify = api.getService();
-
-            HashMap<String, Object> options = new HashMap<>();
-            options.put("country", "NZ");
-
-            Tracks tracks = spotify.getArtistTopTrack(params[0], options);
-
-            return tracks.tracks;
-        }
-
-        @Override
-        protected void onPostExecute(final List<Track> tracks) {
-            super.onPostExecute(tracks);
-
-            mApplication.topTracks = tracks;
-            populateAdapter();
-        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.top_tracks_container, fragment)
+                .commit();
     }
 }
