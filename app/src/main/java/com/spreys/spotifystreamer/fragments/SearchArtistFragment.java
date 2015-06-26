@@ -1,11 +1,10 @@
 package com.spreys.spotifystreamer.fragments;
 
-import android.app.Application;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,14 +43,20 @@ public class SearchArtistFragment extends Fragment {
     private MyApplication mApplication;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_fragment, container, false);
+    public void onResume() {
+        super.onResume();
 
         mApplication = (MyApplication)getActivity().getApplication();
         //Repopulate data if available
         if(mApplication.searchResultArtists != null){
             addAdapter();
         }
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.search_fragment, container, false);
 
         EditText searchView = (EditText)view.findViewById(R.id.activity_search_edit_text);
         final Context mContext = getActivity();
