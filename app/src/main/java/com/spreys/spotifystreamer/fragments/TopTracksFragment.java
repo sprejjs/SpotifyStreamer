@@ -2,16 +2,19 @@ package com.spreys.spotifystreamer.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
+import com.spreys.spotifystreamer.activities.PlayTrackActivity;
 import com.spreys.spotifystreamer.adapters.TopTracksAdapter;
 
 import java.util.HashMap;
@@ -55,6 +58,15 @@ public class TopTracksFragment extends Fragment {
         //Attach the adapter to the list view
         ListView listView = (ListView)getActivity().findViewById(R.id.activity_top_tracks_list_view);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Navigate to the next activity
+                Intent intent = new Intent(getActivity(), PlayTrackActivity.class);
+                intent.putExtra(PlayTrackFragment.KEY_TOP_TRACK_ID, mApplication.topTracks.get(position).id);
+                startActivity(intent);
+            }
+        });
     }
 
     class GetTopTracksTask extends AsyncTask<String, Void, List<Track>> {

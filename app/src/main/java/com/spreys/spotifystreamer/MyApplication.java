@@ -18,4 +18,14 @@ import kaaes.spotify.webapi.android.models.Track;
 public class MyApplication extends Application {
     public List<Artist> searchResultArtists;
     public List<Track> topTracks;
+
+    public Track getTrackById(String id) {
+        for (Track track : topTracks) {
+            if(track.id.equals(id)) {
+                return track;
+            }
+        }
+
+        return null;
+    }
 }
