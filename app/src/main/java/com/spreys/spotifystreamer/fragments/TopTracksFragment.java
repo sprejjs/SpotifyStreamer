@@ -12,11 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.spreys.spotifystreamer.IActivity;
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
-import com.spreys.spotifystreamer.activities.PlayTrackActivity;
 import com.spreys.spotifystreamer.activities.SearchActivity;
-import com.spreys.spotifystreamer.activities.TopTracksActivity;
 import com.spreys.spotifystreamer.adapters.TopTracksAdapter;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
  *         Project: Spotify Streamer
  *         Contact by: vlad@spreys.com
  */
-public class TopTracksFragment extends Fragment {
+public class TopTracksFragment extends Fragment{
     public static final String KEY_ARTIST_ID = "key_artist_id";
     private MyApplication mApplication;
 
@@ -66,7 +65,7 @@ public class TopTracksFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((SearchActivity)getActivity()).onTrackSelected(position);
+                ((IActivity)getActivity()).onTrackSelected(position);
             }
         });
     }

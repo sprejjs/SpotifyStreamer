@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
+import com.spreys.spotifystreamer.IActivity;
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
 import com.spreys.spotifystreamer.fragments.PlayTrackFragment;
 import com.spreys.spotifystreamer.fragments.TopTracksFragment;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements IActivity {
     private boolean mTablet;
 
     @Override
