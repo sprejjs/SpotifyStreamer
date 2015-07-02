@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
+import com.spreys.spotifystreamer.activities.SearchActivity;
 import com.spreys.spotifystreamer.activities.TopTracksActivity;
 import com.spreys.spotifystreamer.adapters.SearchResultsAdapter;
 
@@ -89,15 +90,7 @@ public class SearchArtistFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //Clear the top tracks cache
-                mApplication.topTracks = null;
-
-                //Navigate to the next activity
-                Intent intent = new Intent(mContext, TopTracksActivity.class);
-                intent.putExtra(TopTracksActivity.EXTRA_ARTIST_ID, mApplication.searchResultArtists.get(position).id);
-                intent.putExtra(TopTracksActivity.EXTRA_ARTIST_NAME, mApplication.searchResultArtists.get(position).name);
-                startActivity(intent);
+                ((SearchActivity)getActivity()).onItemSelected(position);
             }
         });
     }

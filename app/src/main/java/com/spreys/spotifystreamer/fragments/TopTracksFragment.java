@@ -15,6 +15,8 @@ import android.widget.ListView;
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
 import com.spreys.spotifystreamer.activities.PlayTrackActivity;
+import com.spreys.spotifystreamer.activities.SearchActivity;
+import com.spreys.spotifystreamer.activities.TopTracksActivity;
 import com.spreys.spotifystreamer.adapters.TopTracksAdapter;
 
 import java.util.HashMap;
@@ -38,8 +40,8 @@ public class TopTracksFragment extends Fragment {
     private MyApplication mApplication;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.top_tracks_fragment, container, false);
+    public void onResume() {
+        super.onResume();
 
         mApplication = (MyApplication)getActivity().getApplication();
 
@@ -48,8 +50,11 @@ public class TopTracksFragment extends Fragment {
         } else {
             new GetTopTracksTask(getActivity()).execute(getArguments().getString(KEY_ARTIST_ID));
         }
+    }
 
-        return view;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.top_tracks_fragment, container, false);
     }
 
     private void populateAdapter() {
@@ -61,10 +66,7 @@ public class TopTracksFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Navigate to the next activity
-                Intent intent = new Intent(getActivity(), PlayTrackActivity.class);
-                intent.putExtra(PlayTrackFragment.KEY_TOP_TRACK_ID, mApplication.topTracks.get(position).id);
-                startActivity(intent);
+                ((SearchActivity)getActivity()).onTrackSelected(position);
             }
         });
     }

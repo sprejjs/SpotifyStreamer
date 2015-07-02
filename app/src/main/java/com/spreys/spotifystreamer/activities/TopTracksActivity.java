@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
+import com.spreys.spotifystreamer.fragments.PlayTrackFragment;
 import com.spreys.spotifystreamer.fragments.TopTracksFragment;
 
 /**

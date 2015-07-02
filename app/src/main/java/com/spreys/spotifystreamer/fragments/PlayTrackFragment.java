@@ -1,47 +1,25 @@
 package com.spreys.spotifystreamer.fragments;
 
-import android.content.Context;
-import android.content.Intent;
+import android.app.Dialog;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.spreys.spotifystreamer.MyApplication;
 import com.spreys.spotifystreamer.R;
-import com.spreys.spotifystreamer.activities.PlayTrackActivity;
-import com.spreys.spotifystreamer.activities.TopTracksActivity;
-import com.spreys.spotifystreamer.adapters.SearchResultsAdapter;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.List;
-
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
@@ -52,12 +30,11 @@ import kaaes.spotify.webapi.android.models.Track;
  *         Project: Spotify Streamer
  *         Contact by: vlad@spreys.com
  */
-public class PlayTrackFragment extends Fragment {
+public class PlayTrackFragment extends DialogFragment {
     public static final String KEY_TOP_TRACK_ID = "top_track_id";
     private Handler mHandler = new Handler();
     private MediaPlayer mPlayer;
     private Track mTrack;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -140,6 +117,13 @@ public class PlayTrackFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPlayer.stop();
+        mPlayer = null;
+    }
+
     private void prepareMediaPlayer() {
         //Prepare player
         try {
@@ -150,11 +134,13 @@ public class PlayTrackFragment extends Fragment {
             mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    getActivity().findViewById(R.id.btn_play).setEnabled(true);
-                    ((TextView)getActivity().findViewById(R.id.play_track_current_time))
-                            .setText(String.valueOf("0:00"));
-                    ((TextView)getActivity().findViewById(R.id.play_track_max_length))
-                            .setText(String.valueOf("0:" + mPlayer.getDuration() / 1000));
+                    if (mPlayer != null) {
+                        getView().findViewById(R.id.btn_play).setEnabled(true);
+                        ((TextView)getView().findViewById(R.id.play_track_current_time))
+                                .setText(String.valueOf("0:00"));
+                        ((TextView)getView().findViewById(R.id.play_track_max_length))
+                                .setText(String.valueOf("0:" + mPlayer.getDuration() / 1000));
+                    }
                 }
             });
             mPlayer.prepare();
@@ -167,13 +153,13 @@ public class PlayTrackFragment extends Fragment {
         //Resume playing
         mPlayer.start();
         initiateSeekBar();
-        ((Button)getActivity().findViewById(R.id.btn_play)).setText("||");
+        ((Button)getView().findViewById(R.id.btn_play)).setText("||");
     }
 
     private void initiateSeekBar(){
 
         //Configure seek bar
-        final SeekBar seekBar = (SeekBar) getActivity().findViewById(R.id.play_track_seek_bar);
+        final SeekBar seekBar = (SeekBar) getView().findViewById(R.id.play_track_seek_bar);
         seekBar.setMax(mPlayer.getDuration());
 
         mHandler = new Handler(Looper.getMainLooper());
@@ -191,7 +177,7 @@ public class PlayTrackFragment extends Fragment {
                     } else {
                         currentTimeString = String.valueOf(currentTimeInt);
                     }
-                    ((TextView) getActivity().findViewById(R.id.play_track_current_time))
+                    ((TextView) getView().findViewById(R.id.play_track_current_time))
                             .setText(String.valueOf("0:" + currentTimeString));
                 }
                 mHandler.postDelayed(this, 50);
