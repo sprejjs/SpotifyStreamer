@@ -28,4 +28,24 @@ public class MyApplication extends Application {
 
         return null;
     }
+
+    public Track getNextTrack(Track track) {
+        int index = topTracks.indexOf(track);
+
+        if(index + 1 < topTracks.size()) {
+            return topTracks.get(index + 1);
+        }
+
+        return null;
+    }
+
+    public Track getPreviousTrack(Track track) {
+        int index = topTracks.indexOf(track);
+
+        if(index - 1 >= 0) {
+            return topTracks.get(index - 1);
+        }
+
+        return null;
+    }
 }

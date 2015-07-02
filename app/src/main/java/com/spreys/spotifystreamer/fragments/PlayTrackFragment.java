@@ -67,10 +67,32 @@ public class PlayTrackFragment extends Fragment {
                 .getTrackById(getArguments().getString(KEY_TOP_TRACK_ID));
         mPlayer = new MediaPlayer();
 
+        prepareView(view);
+
+        return view;
+    }
+
+    private void prepareView(final View view) {
         //Fill up text views
         ((TextView)view.findViewById(R.id.play_track_artist_name)).setText(mTrack.artists.get(0).name);
         ((TextView)view.findViewById(R.id.play_track_album_name)).setText(mTrack.album.name);
         ((TextView)view.findViewById(R.id.play_track_name)).setText(mTrack.name);
+
+        //Reset play button
+        Button playButton = ((Button)view.findViewById(R.id.btn_play));
+        playButton.setText(getString(R.string.btn_play));
+        playButton.setEnabled(false);
+
+        //Disable previous/next button if required
+        Button previousButton = (Button)view.findViewById(R.id.btn_previous);
+        previousButton.setEnabled(
+                ((MyApplication)getActivity().getApplication()).getPreviousTrack(mTrack) != null
+        );
+
+        Button nextButton = (Button)view.findViewById(R.id.btn_next);
+        nextButton.setEnabled(
+                ((MyApplication)getActivity().getApplication()).getNextTrack(mTrack) != null
+        );
 
         //Download the artwork
         if(mTrack.album.images.size() > 0){
@@ -88,25 +110,40 @@ public class PlayTrackFragment extends Fragment {
 
         prepareMediaPlayer();
 
-        view.findViewById(R.id.btn_play).setOnClickListener(new View.OnClickListener() {
+        playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mPlayer.isPlaying()){
+                if (!mPlayer.isPlaying()) {
                     play();
                 } else {
                     mPlayer.pause();
-                    ((Button)view.findViewById(R.id.btn_play))
+                    ((Button) view.findViewById(R.id.btn_play))
                             .setText(getString(R.string.btn_play));
                 }
             }
         });
 
-        return view;
+        view.findViewById(R.id.btn_previous).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTrack = ((MyApplication)getActivity().getApplication()).getPreviousTrack(mTrack);
+                prepareView(getView());
+            }
+        });
+
+        view.findViewById(R.id.btn_next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTrack = ((MyApplication)getActivity().getApplication()).getNextTrack(mTrack);
+                prepareView(getView());
+            }
+        });
     }
 
     private void prepareMediaPlayer() {
         //Prepare player
         try {
+            mPlayer.reset();
             mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mPlayer.setDataSource(mTrack.preview_url);
             mPlayer.prepareAsync();
