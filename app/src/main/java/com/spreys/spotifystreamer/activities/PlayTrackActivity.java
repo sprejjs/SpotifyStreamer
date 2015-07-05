@@ -29,8 +29,5 @@ public class PlayTrackActivity extends AppCompatActivity {
         fragment.setArguments(args);
 
         fragment.show(getSupportFragmentManager(), null);
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.play_track_container, fragment)
-//                .commit();
     }
 }
