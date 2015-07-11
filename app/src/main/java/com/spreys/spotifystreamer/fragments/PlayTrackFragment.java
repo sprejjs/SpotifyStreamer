@@ -140,6 +140,9 @@ public class PlayTrackFragment extends DialogFragment {
                                 .setText(String.valueOf("0:00"));
                         ((TextView)getView().findViewById(R.id.play_track_max_length))
                                 .setText(String.valueOf("0:" + mPlayer.getDuration() / 1000));
+
+                        //Start playing automatically
+                        play();
                     }
                 }
             });
