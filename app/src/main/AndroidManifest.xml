@@ -26,8 +26,6 @@
         <activity android:name=".activities.TopTracksActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".activities.SearchActivity"/>
-
-        <activity android:name=".activities.PlayTrackActivity"/>
     </application>
 
 </manifest>
