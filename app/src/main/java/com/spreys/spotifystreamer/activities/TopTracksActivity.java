@@ -1,6 +1,5 @@
 package com.spreys.spotifystreamer.activities;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -53,10 +52,12 @@ public class TopTracksActivity extends AppCompatActivity implements IActivity{
         PlayTrackFragment fragment = new PlayTrackFragment();
 
         Bundle args = new Bundle();
-        args.putString(PlayTrackFragment.KEY_TOP_TRACK_ID, ((MyApplication)getApplication()).topTracks.get(position).id);
+        args.putString(PlayTrackFragment.KEY_TOP_TRACK_ID, ((MyApplication) getApplication()).topTracks.get(position).id);
 
         fragment.setArguments(args);
-        fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-        fragment.show(getSupportFragmentManager(), null);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.top_tracks_container, fragment)
+                .addToBackStack("topTracksFragment")
+                .commit();
     }
 }

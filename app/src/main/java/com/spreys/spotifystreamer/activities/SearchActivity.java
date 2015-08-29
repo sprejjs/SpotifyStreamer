@@ -57,11 +57,23 @@ public class SearchActivity extends AppCompatActivity implements IActivity {
         mApplication.topTracks = null;
     }
 
+    @Override
+    public void onBackPressed() {
+        // Catch back action and pops from backstack
+        // (if you called previously to addToBackStack() in your transaction)
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStack();
+        } else {
+            // Default action on back pressed
+            super.onBackPressed();
+        }
+    }
+
     public void onTrackSelected(int position){
         PlayTrackFragment fragment = new PlayTrackFragment();
 
         Bundle args = new Bundle();
-        args.putString(PlayTrackFragment.KEY_TOP_TRACK_ID, ((MyApplication)getApplication()).topTracks.get(position).id);
+        args.putString(PlayTrackFragment.KEY_TOP_TRACK_ID, ((MyApplication) getApplication()).topTracks.get(position).id);
 
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
