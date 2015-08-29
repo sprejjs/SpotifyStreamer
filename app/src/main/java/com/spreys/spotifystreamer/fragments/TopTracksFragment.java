@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.spreys.spotifystreamer.IActivity;
 import com.spreys.spotifystreamer.MyApplication;
@@ -96,6 +97,13 @@ public class TopTracksFragment extends Fragment{
 
             mApplication.topTracks = tracks;
             populateAdapter();
+
+            if(tracks.size() == 0) {
+                Toast.makeText(mContext,
+                        getResources().getString(R.string.err_no_music_found),
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 }

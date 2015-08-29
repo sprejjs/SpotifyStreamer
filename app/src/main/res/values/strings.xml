@@ -6,6 +6,7 @@
     <string name="help_seart_artist">Artist Name</string>
     <string name="top_tracks_title">Top 10 Tracks</string>
     <string name="err_no_artists_found">No artists match this search query</string>
+    <string name="err_no_music_found">No music available for preview for this artist</string>
     <string name="bnt_previous">⏪</string>
     <string name="btn_play">▶</string>
     <string name="btn_next">⏩</string>
