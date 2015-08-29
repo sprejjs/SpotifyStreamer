@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.spreys.spotifystreamer.activities.TopTracksActivity;
 import com.spreys.spotifystreamer.adapters.SearchResultsAdapter;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -107,14 +109,26 @@ public class SearchArtistFragment extends Fragment {
             SpotifyApi api = new SpotifyApi();
             SpotifyService spotify = api.getService();
 
-            ArtistsPager pager = spotify.searchArtists(params[0]);
-
-            return pager.artists.items;
+            try {
+                ArtistsPager pager = spotify.searchArtists(params[0]);
+                return pager.artists.items;
+            } catch (Exception exception) {
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(final List<Artist> artists) {
             super.onPostExecute(artists);
+
+            //Check for null (may happen if the network is down, or the API isn't working)
+            if(artists == null) {
+                Toast.makeText(mContext,
+                        getResources().getString(R.string.err_cant_retrieve_artists),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
 
             //Keep a copy of list in case the screen orientation changes
             mApplication.searchResultArtists = artists;

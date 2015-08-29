@@ -86,14 +86,26 @@ public class TopTracksFragment extends Fragment{
             HashMap<String, Object> options = new HashMap<>();
             options.put("country", "NZ");
 
-            Tracks tracks = spotify.getArtistTopTrack(params[0], options);
-
-            return tracks.tracks;
+            try {
+                Tracks tracks = spotify.getArtistTopTrack(params[0], options);
+                return tracks.tracks;
+            } catch(Exception exception) {
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(final List<Track> tracks) {
             super.onPostExecute(tracks);
+
+            //Check for null (may happen if the network is down, or the API isn't working)
+            if(tracks == null) {
+                Toast.makeText(mContext,
+                        getResources().getString(R.string.err_cant_retrieve_tracks),
+                        Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
 
             mApplication.topTracks = tracks;
             populateAdapter();
