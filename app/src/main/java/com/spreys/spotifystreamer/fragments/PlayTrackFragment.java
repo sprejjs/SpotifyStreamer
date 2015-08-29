@@ -164,6 +164,22 @@ public class PlayTrackFragment extends DialogFragment {
         //Configure seek bar
         final SeekBar seekBar = (SeekBar) getView().findViewById(R.id.play_track_seek_bar);
         seekBar.setMax(mPlayer.getDuration());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                //Intentionally left empty
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //Intentionally left empty
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                mPlayer.seekTo(seekBar.getProgress());
+            }
+        });
 
         mHandler = new Handler(Looper.getMainLooper());
         mHandler.post(new Runnable() {
